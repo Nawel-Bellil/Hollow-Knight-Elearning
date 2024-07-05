@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Admin {
+  id               Int         @id @default(autoincrement())
+  email            String      @unique
+  first_name       String
+  last_name        String
+  password         String
+  role             String      @default("ADMIN")
+  is_superadmin    Boolean
+  dashboard_access Boolean
+  sub_admins       Sub_Admin[]
+  courses          Course[]
+
+}
+
+model Sub_Admin{
+  id               Int         @id @default(autoincrement())
+  email            String      @unique
+  first_name       String
+  last_name        String
+  password         String
+  role             String      @default("SUB_ADMIN")
+  admin            Admin       @relation(fields: [adminId], references: [id])
+  adminId          Int
+  can_manage_users Boolean
+}
+
+model Student {
+  id                 Int                 @id @default(autoincrement())
+  email              String              @unique
+  first_name         String
+  last_name          String
+  password           String
+  role               String              @default("STUDENT")
+  enrolled_courses   EnrolledCourse[]
+  forum_posts        ForumPost[]
+  track_progress     CourseProgress[]
+  certificates       Certificate[]
+  payment_transactions PaymentTransaction[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Course{
+  id                Int                  @id @default(autoincrement())
+  title             String
+  description       String
+  content           String
+  admin             Admin                @relation(fields: [adminId], references: [id])
+  adminId           Int
+  enrolled_students EnrolledCourse[]
+  forum_posts       ForumPost[]
+  course_progress   CourseProgress[]
+  certificates      Certificate[]
+  payment_transactions PaymentTransaction[]
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  
+}
+model EnrolledCourse {
+  id         Int     @id @default(autoincrement())
+  student    Student @relation(fields: [studentId], references: [id])
+  studentId  Int
+  course     Course  @relation(fields: [courseId], references: [id])
+  courseId   Int
+  createdAt  DateTime @default(now())
+}
+
+model CourseProgress {
+  id        Int      @id @default(autoincrement())
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  Int
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId Int
+  progress  Int
+  updatedAt DateTime @default(now())
+
+}
+
+model ForumPost {
+  id         Int      @id @default(autoincrement())
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   Int
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Certificate {
+  id         Int      @id @default(autoincrement())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   Int
+  certificate String
+  issuedAt   DateTime @default(now())
+}
+
+model PaymentTransaction {
+  id         Int      @id @default(autoincrement())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   Int
+  amount     Int
+  createdAt  DateTime @default(now())
+}
