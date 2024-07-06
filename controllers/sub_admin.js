@@ -5,13 +5,12 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Get All Users
-async function createUser(req, res) {
-  const { email, password, first_name, last_name } = req.body;
+async function createSubAdmin(req, res) {
+  const { email, password, first_name, last_name, adminId } = req.body;
 
   try {
     // Check if user already exists
-    const userExists = await prisma.user.findUnique({
+    const userExists = await prisma.user.findFirst({
       where: { email },
     });
 
@@ -23,28 +22,36 @@ async function createUser(req, res) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
+    // Create sub admin
+    // create() method provided by Prisma's user model
     const user = await prisma.user.create({
       data: {
-        email,
-        password: hashedPassword,
         first_name,
         last_name,
-        
+        email,
+        password: hashedPassword,
       },
     });
+    const subadmin = await prisma.sub_Admin.create({
+      data: {
+        user: { connect: { id: user.id } },
+        adminId,
+        can_manage_users: true,
+      },
+    });
+    //console.log(subadmin);
 
     // Create token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
 
-    res.status(201).json({ token });
+    res.status(201).json({ token, subadmin });
   } catch (error) {
-    console.error("Error during user registration:", error);
+    console.error("Error during sub admin registration:", error);
     res.status(500).json({ message: "Server error" });
   }
 }
 
-async function loginUser(req, res) {
+async function loginSubAdmin(req, res) {
   const { email, password } = req.body;
 
   try {
@@ -67,80 +74,151 @@ async function loginUser(req, res) {
 
     // Respond with token
     res.json({ token, user });
+
+    // Retrieve all chapters
+    // const chapters = await getAllChapters();
   } catch (error) {
     console.error("Login error:", error);
 
     res.status(500).json({ error: "Error logging in user" });
   }
 }
-async function getAllUsers(req, res) {
-  const users = await prisma.user.findMany();
-  res.json(users);
-}
-
-// Get User by ID
-async function getUserById(req, res) {
-  const id = parseInt(req.user.id);
-  const user = await prisma.user.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      first_name: true,
-      last_name: true,
-      posts: true,
-      profile: true,
-      Story: true,
-      email: true,
-    },
-  });
-  res.status(200).send({ msg: "good", user });
-}
-
-// Delete User by ID
-async function deleteUserById(req, res) {
-  const id = parseInt(req.params.id);
-  const user = await prisma.user.delete({
-    where: {
-      id: id,
-    },
-  });
-  res.json({ message: "User deleted successfully" });
-}
-
-// Update User by ID
-async function updateUserById(req, res) {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    return res.status(400).send("Invalid user ID.");
-  }
-
+async function getAllAdmins(req, res) {
   try {
-    const user = await prisma.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        email: req.body.email,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+    const subadmins = await prisma.sub_Admin.findMany({
+      select: {
+        user: true,
+        adminId: true,
+        can_manage_users: true,
       },
     });
-    res.json({ message: "User updated successfully", user });
+    res.json(subadmins);
   } catch (error) {
-    if (error.code === "P2025") {
-      return res.status(404).send("User not found.");
+    console.error("Error fetching admins:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+async function getAdminById(req, res) {
+  const id = req.params.id;
+  try {
+    const subadmin = await prisma.sub_Admin.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        user: true,
+        id: true,
+        adminId: true,
+        can_manage_users: true,
+      },
+    });
+    if (!subadmin) {
+      return res.status(404).json({ error: "sub admin not found" });
     }
-    res.status(500).send("An error occurred while updating the user.");
+    return res.status(200).json({ subadmin });
+  } catch (e) {
+    console.error("Error fetching sub admin:", e);
+    return res.status(500).json({ error: "Server Error" });
+  }
+}
+async function getSubAdmin(req, res) {
+  const id = req.user.id;
+  console.log(id);
+  try {
+    const subadmin = await prisma.admin.findFirst({
+      where: {
+        id: parseInt(id),
+      },
+      select: {
+        user: true,
+        id: true,
+        adminId,
+        can_manage_users: true,
+      },
+    });
+    if (!subadmin) {
+      return res.status(404).json({ error: "sub admin not found" });
+    }
+    return res.status(200).json({ subadmin });
+  } catch (e) {
+    console.error("Error fetching sub admin:", e);
+    return res.status(500).json({ error: "Server Error" });
+  }
+}
+async function deleteSubAdmin(req, res) {
+  const id = parseInt(req.params.id);
+
+  try {
+    const subadmin = await prisma.sub_Admin.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!subadmin) {
+      return res.status(404).json({ error: "Sub admin not found" });
+    }
+
+    await prisma.sub_Admin.delete({
+      where: {
+        id,
+      },
+    });
+
+    res.status(200).json({ message: "Sub admin deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting sub admin:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+async function updateAdmin(req, res) {
+  try {
+    const { id } = req.params; // sub admin ID
+    const { password } = req.body; // Updated password
+
+    // Find the student by ID
+    const subadmin = await prisma.sub_Admin.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    // Check if the student exists
+    if (!subadmin) {
+      return res.status(404).json({ error: " sub admin not found" });
+    }
+    // Update password if provided
+    if (!password) {
+      return res.status(400).json({ error: "New password is required" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await prisma.sub_Admin.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: " sub admin password updated successfully" });
+  } catch (error) {
+    console.error("Error updating sub admin password:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
 
 module.exports = {
-  createUser,
-  getAllUsers,
-  getUserById,
-  deleteUserById,
-  updateUserById,
-  loginUser,
+  createSubAdmin,
+  loginSubAdmin,
+  getAllAdmins,
+  getAdminById,
+  getSubAdmin,
+  deleteSubAdmin,
+  updateAdmin,
 };

@@ -5,10 +5,6 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Import getAllChapters function from chapters controller
-//const { getAllChapters } = require("./chapter");
-//const { getAllQuizzes } = require("./quizz");
-
 async function createAdmin(req, res) {
   const { email, password, first_name, last_name } = req.body;
 
@@ -36,6 +32,7 @@ async function createAdmin(req, res) {
         password: hashedPassword,
       },
     });
+
     const admin = await prisma.admin.create({
       data: {
         user: { connect: { id: user.id } },
@@ -44,9 +41,6 @@ async function createAdmin(req, res) {
       },
     });
     console.log(admin);
-
-    // Retrieve all chapters
-    // const chapters = await getAllChapters();
 
     // Create token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
@@ -90,41 +84,25 @@ async function loginAdmin(req, res) {
     res.status(500).json({ error: "Error logging in user" });
   }
 }
+
 async function getAllAdmins(req, res) {
-  const admins = await prisma.admin.findMany({
-    select: {
-      user: true,
-      courses: true,
-      sub_admins: true,
-      is_superadmin: true,
-      dashboard_access: true,
-    },
-  });
-  res.json(admins);
-}
-async function getAdminById(req, res) {
-  const id = req.params.id;
   try {
-    const admin = await prisma.admin.findUnique({
-      where: {
-        id: parseInt(id),
-      },
+    const admins = await prisma.admin.findMany({
       select: {
         user: true,
-        id: true,
         courses: true,
         sub_admins: true,
+        is_superadmin: true,
+        dashboard_access: true,
       },
     });
-    if (!admin) {
-      return res.status(404).json({ error: "admin not found" });
-    }
-    return res.status(200).json({ admin });
-  } catch (e) {
-    console.error("Error fetching admin:", e);
-    return res.status(500).json({ error: "Server Error" });
+    res.json(admins);
+  } catch (error) {
+    console.error("Error fetching admins:", error);
+    res.status(500).json({ error: "Server error" });
   }
 }
+
 async function getAdmin(req, res) {
   const id = req.user.id;
   console.log(id);
@@ -165,19 +143,13 @@ async function deleteAdmin(req, res) {
         id: parseInt(req.params.id),
       },
     });
-    /* await prisma.student.update({
-      where: {
-        id: parseInt(req.params.id),
-      },
-      data: {
-        
-      },
-    });*/
+
     await prisma.admin.delete({
       where: {
         id: admin.id,
       },
     });
+
     return res.status(200).json({ message: "admin deleted successfully" });
   } catch (error) {
     console.error("Error deleting admin:", error);
@@ -187,16 +159,16 @@ async function deleteAdmin(req, res) {
 
 async function updateAdmin(req, res) {
   try {
-    const { id } = req.params; // Student ID
+    const { id } = req.params; // admin ID
     const { password } = req.body; // Updated password
 
-    // Find the student by ID
+    // Find the admin by ID
     const admin = await prisma.admin.findUnique({
       where: {
         id: parseInt(id),
       },
     });
-    // Check if the student exists
+    // Check if the admin exists
     if (!admin) {
       return res.status(404).json({ error: "admin not found" });
     }
@@ -231,6 +203,5 @@ module.exports = {
   getAllAdmins,
   deleteAdmin,
   updateAdmin,
-  getAdminById,
   getAdmin,
 };
