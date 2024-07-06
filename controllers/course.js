@@ -1,97 +1,90 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Create Module
-async function createModule(req, res) {
-  const { name } = req.body;
+async function createCourse(req, res) {
+  const { title, description, content, adminId } = req.body;
 
   try {
-    if (!req.body || !req.body.name) {
-      return res
-        .status(400)
-        .json({ error: "Name is required in the request body" });
-    }
-    const module = await prisma.module.create({
+    const course = await prisma.course.create({
       data: {
-        name,
+        title,
+        description,
+        content,
+        admin: { connect: { id: adminId } },
       },
     });
-
-    res.status(201).json({ message: "Module created successfully", module });
+    res.status(201).json(course);
   } catch (error) {
-    console.error("Error creating module:", error);
-    res.status(500).json({ error: "Server error" });
+    console.error("Error creating course:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
-// Get All Modules
-async function getAllModules(req, res) {
+async function getCourses(req, res) {
   try {
-    const modules = await prisma.module.findMany({
-      // include: {
-      //   chapters: true, // Include chapters details
-      // },
-    });
-    res.json(modules);
+    const courses = await prisma.course.findMany();
+    res.status(200).json(courses);
   } catch (error) {
-    console.error("Error fetching modules:", error);
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
-// Get Module by ID
-async function getModuleById(req, res) {
-  const moduleId = parseInt(req.params.id);
+async function getCourseById(req, res) {
+  const id = req.params.id;
 
   try {
-    const module = await prisma.module.findUnique({
-      where: {
-        id: moduleId,
-      },
+    const course = await prisma.course.findUnique({
+      where: { id: parseInt(id) },
     });
-
-    if (!module) {
-      return res.status(404).json({ error: "Module not found" });
+    if (!course) {
+      return res.status(404).json({ error: "Course not found" });
     }
-
-    res.status(200).json({ module });
+    res.status(200).json(course);
   } catch (error) {
-    console.error("Error fetching module:", error);
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching course:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
-// Delete Module by ID
-async function deleteModule(req, res) {
-  const moduleId = parseInt(req.params.id);
+async function updateCourse(req, res) {
+  const id = req.params.id;
+  const { title, description, content } = req.body;
 
   try {
-    const module = await prisma.module.findUnique({
-      where: {
-        id: moduleId,
+    const course = await prisma.course.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        description,
+        content,
       },
     });
-
-    if (!module) {
-      return res.status(404).json({ error: "Module not found" });
-    }
-
-    await prisma.module.delete({
-      where: {
-        id: moduleId,
-      },
-    });
-
-    res.status(200).json({ message: "Module deleted successfully" });
+    res.status(200).json(course);
   } catch (error) {
-    console.error("Error deleting module:", error);
-    res.status(500).json({ error: "Server error" });
+    console.error("Error updating course:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async function deleteCourse(req, res) {
+  const id = req.params.id;
+
+  try {
+    await prisma.course.delete({
+      where: { id: parseInt(id) },
+    });
+    res.status(200).json({ message: "Course deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
 module.exports = {
-  createModule,
-  getAllModules,
-  getModuleById,
-  deleteModule,
+  createCourse,
+  getCourses,
+  getCourseById,
+  updateCourse,
+  deleteCourse,
 };
