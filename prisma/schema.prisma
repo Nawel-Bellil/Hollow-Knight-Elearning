@@ -71,10 +71,20 @@ model Course{
   course_progress   CourseProgress[]
   certificates      Certificate[]
   payment_transactions PaymentTransaction[]
+  quizz             Quizz?
+  quizz_solved      Boolean
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
   
 }
+model Quizz {
+  quizz_id       Int            @id @default(autoincrement())
+  course         Course        @relation(fields: [courseId], references: [id]) // Reference to the associated Chapter
+  courseId       Int           @unique
+  solved         Boolean
+  
+} 
+
 model EnrolledCourse {
   id         Int     @id @default(autoincrement())
   student    Student @relation(fields: [studentId], references: [id])

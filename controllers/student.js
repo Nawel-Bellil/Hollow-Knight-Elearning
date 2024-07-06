@@ -10,10 +10,7 @@ const jwt = require("jsonwebtoken");
 //const { getAllQuizzes } = require("./quizz");
 
 async function createStudent(req, res) {
-  const { email, password, first_name, last_name,  } =
-    req.body;
-
-  const matricule = parseInt(matricule_student);
+  const { email, password, first_name, last_name } = req.body;
 
   try {
     // Check if user already exists
@@ -41,7 +38,7 @@ async function createStudent(req, res) {
     });
     const student = await prisma.student.create({
       data: {
-        user: { connect: { id: user.id } }
+        user: { connect: { id: user.id } },
       },
     });
     console.log(student);
@@ -95,7 +92,6 @@ async function getAllUStudent(req, res) {
   const users = await prisma.student.findMany({
     select: {
       user: true,
-      matricule: true,
     },
   });
   res.json(users);
@@ -105,7 +101,15 @@ async function getStudentById(req, res) {
   try {
     const student = await prisma.student.findUnique({
       where: {
-        matricule: parseInt(id),
+        id: parseInt(id),
+      },
+      select: {
+        user: true,
+        id: true,
+        enrolled_courses: true,
+        certificates: true,
+        track_progress: true,
+        payment_transactions: true,
       },
     });
     if (!student) {
@@ -130,8 +134,8 @@ async function getStudent(req, res) {
         id: true,
         enrolled_courses: true,
         certificates: true,
-        track_progress:true,
-        payment_transactions:true,
+        track_progress: true,
+        payment_transactions: true,
       },
     });
     if (!student) {
@@ -159,7 +163,7 @@ async function deleteStudent(req, res) {
         id: parseInt(req.params.id),
       },
     });
-   /* await prisma.student.update({
+    /* await prisma.student.update({
       where: {
         id: parseInt(req.params.id),
       },
