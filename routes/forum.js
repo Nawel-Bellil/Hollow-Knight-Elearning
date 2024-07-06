@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const forumController = require('../controllers/forum');
+const forum = require('../controllers/forum');
 
-router.post('/create', forumController.createForumPost);
-router.get('/course/:courseId', forumController.getForumPostsByCourse);
-router.delete('/:id', forumController.deleteForumPost);
+router.post('/create', forum.createForumPost);
+router.get('/course/:courseId', forum.getForumPostsByCourse);
+router.delete('/:id', forum.deleteForumPost);
 
 module.exports = router;

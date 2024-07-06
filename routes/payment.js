@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const paymentController = require('../controllers/payment');
+const payment = require('../controllers/payment');
 
-router.post('/process', paymentController.processPayment);
-router.get('/student/:studentId', paymentController.getPaymentsByStudent);
-router.delete('/:id', paymentController.cancelPayment);
+router.post('/process', payment.processPayment);
+router.get('/student/:studentId', payment.getPaymentsByStudent);
+router.delete('/:id', payment.cancelPayment);
 
 module.exports = router;
