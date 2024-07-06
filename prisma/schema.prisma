@@ -12,12 +12,20 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model User {
+  id         Int      @id @default(autoincrement()) // Unique identifier for the user
+  email      String   @unique // Unique email address of the user
+  first_name String   @default("")
+  last_name  String   @default("")
+  password   String
+  student    Student? // Define a one-to-one relation to Student
+  admin Admin? // Define a one-to-one relation to Admin
+  sub_admin Sub_Admin?  // Define a one-to-one relation to Sub_Admin
+}
 model Admin {
   id               Int         @id @default(autoincrement())
-  email            String      @unique
-  first_name       String
-  last_name        String
-  password         String
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)       
+  userId           Int         @unique
   role             String      @default("ADMIN")
   is_superadmin    Boolean
   dashboard_access Boolean
@@ -28,9 +36,8 @@ model Admin {
 
 model Sub_Admin{
   id               Int         @id @default(autoincrement())
-  email            String      @unique
-  first_name       String
-  last_name        String
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           Int         @unique
   password         String
   role             String      @default("SUB_ADMIN")
   admin            Admin       @relation(fields: [adminId], references: [id])
@@ -40,10 +47,8 @@ model Sub_Admin{
 
 model Student {
   id                 Int                 @id @default(autoincrement())
-  email              String              @unique
-  first_name         String
-  last_name          String
-  password           String
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             Int                 @unique
   role               String              @default("STUDENT")
   enrolled_courses   EnrolledCourse[]
   forum_posts        ForumPost[]
