@@ -15,7 +15,31 @@ app.use(
   })
 );
 
+// Import route files
+const adminRoutes = require('./routes/adminRoutes');
+const certificateRoutes = require('./routes/certificateRoutes');
+const courseProgressRoutes = require('./routes/courseProgressRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const enrolledCoursesRoutes = require('./routes/enrolledCoursesRoutes');
+const forumRoutes = require('./routes/forumRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const quizzRoutes = require('./routes/quizzRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const subAdminRoutes = require('./routes/subAdminRoutes');
+const userRoutes = require('./routes/userRoutes');
 
+// Use routes
+app.use('/api/admin', adminRoutes);
+app.use('/api/certificate', certificateRoutes);
+app.use('/api/course-progress', courseProgressRoutes);
+app.use('/api/course', courseRoutes);
+app.use('/api/enrolled-courses', enrolledCoursesRoutes);
+app.use('/api/forum', forumRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/quizz', quizzRoutes);
+app.use('/api/student', studentRoutes);
+app.use('/api/sub-admin', subAdminRoutes);
+app.use('/api/user', userRoutes);
 
 
 
