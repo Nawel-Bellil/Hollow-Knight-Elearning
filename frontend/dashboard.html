@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Admin Dashboard</h1>
+      <nav>
+        <ul>
+          <li><a href="#add-courses">Add Courses</a></li>
+          <li><a href="#manage-students">Manage Students</a></li>
+          <li><a href="#manage-subadmins">Manage Sub-Admins</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section id="add-courses">
+      <h2>Add Courses</h2>
+      <form>
+        <label for="course-title">Course Title:</label>
+        <input type="text" id="course-title" name="course-title" required />
+        <label for="course-description">Course Description:</label>
+        <textarea
+          id="course-description"
+          name="course-description"
+          required
+        ></textarea>
+        <label for="course-instructor">Course Instructor:</label>
+        <input
+          type="text"
+          id="course-instructor"
+          name="course-instructor"
+          required
+        />
+        <button type="submit">Add Course</button>
+      </form>
+    </section>
+
+    <section id="manage-students">
+      <h2>Manage Students</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Student Name 1</td>
+            <td>student1@example.com</td>
+            <td><button>Remove</button></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Student Name 2</td>
+            <td>student2@example.com</td>
+            <td><button>Remove</button></td>
+          </tr>
+          <!-- Add more students as needed -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="manage-subadmins">
+      <h2>Manage Sub-Admins</h2>
+      <form>
+        <label for="subadmin-name">Sub-Admin Name:</label>
+        <input type="text" id="subadmin-name" name="subadmin-name" required />
+        <label for="subadmin-email">Sub-Admin Email:</label>
+        <input
+          type="email"
+          id="subadmin-email"
+          name="subadmin-email"
+          required
+        />
+        <button type="submit">Add Sub-Admin</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Sub-Admin ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Sub-Admin Name 1</td>
+            <td>subadmin1@example.com</td>
+            <td><button>Remove</button></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Sub-Admin Name 2</td>
+            <td>subadmin2@example.com</td>
+            <td><button>Remove</button></td>
+          </tr>
+          <!-- Add more sub-admins as needed -->
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p>&copy; 2024 E-Learning Platform. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
