@@ -1,0 +1,25 @@
+type User {
+  id: Int!
+  email: String!
+  first_name: String!
+  last_name: String!
+}
+
+type Course {
+  id: Int!
+  title: String!
+  description: String!
+  content: String!
+}
+
+type Query {
+  users: [User!]!
+  user(id: Int!): User
+  courses: [Course!]!
+  course(id: Int!): Course
+}
+
+type Mutation {
+  createUser(email: String!, password: String!, first_name: String!, last_name: String!): User!
+  createCourse(title: String!, description: String!, content: String!, adminId: Int!): Course!
+}

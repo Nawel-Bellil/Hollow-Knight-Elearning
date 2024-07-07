@@ -7,41 +7,47 @@ const app = express();
 //config middleware
 require("dotenv").config();
 app.use(express.json());
-// Enable CORS for all routes
+// Enable CORS for all
 app.use(
   cors({
     origin: "*",
     credentials: true,
   })
 );
-
+const { graphqlHTTP } = require('express-graphql');
+const { makeExecutableSchema } = require('graphql-tools');
+const { readFileSync } = require('fs');
+const { join } = require('path');
+const resolvers = require('./resolvers');
+const typeDefs = readFileSync(join(__dirname, 'schema.graphql'), 'utf8');
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 // Import route files
-const adminRoutes = require('./routes/adminRoutes');
-const certificateRoutes = require('./routes/certificateRoutes');
-const courseProgressRoutes = require('./routes/courseProgressRoutes');
-const courseRoutes = require('./routes/courseRoutes');
-const enrolledCoursesRoutes = require('./routes/enrolledCoursesRoutes');
-const forumRoutes = require('./routes/forumRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
-const quizzRoutes = require('./routes/quizzRoutes');
-const studentRoutes = require('./routes/studentRoutes');
-const subAdminRoutes = require('./routes/subAdminRoutes');
-const userRoutes = require('./routes/userRoutes');
+const admin = require("./controllers/admin");
+const certificate = require("./controllers/certificate");
+const courseProgress = require("./controllerscourse_progress");
+const course = require("./controllers/course");
+const enrolledCourses = require("./controllers/enrolledcourses");
+const forum = require("./controllers/forum");
+const payment = require("./controllers/payment");
+const quizz = require("./controllers/quizz");
+const student = require("./controllers/student");
+const subAdmin = require("./controllers/subAdmin");
+const user = require("./controllers/user");
 
-// Use routes
-app.use('/api/admin', adminRoutes);
-app.use('/api/certificate', certificateRoutes);
-app.use('/api/course-progress', courseProgressRoutes);
-app.use('/api/course', courseRoutes);
-app.use('/api/enrolled-courses', enrolledCoursesRoutes);
-app.use('/api/forum', forumRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/quizz', quizzRoutes);
-app.use('/api/student', studentRoutes);
-app.use('/api/sub-admin', subAdminRoutes);
-app.use('/api/user', userRoutes);
+// Use
+app.use("/api/admin", admin);
+app.use("/api/certificate", certificate);
+app.use("/api/course-progress", courseProgress);
+app.use("/api/course", course);
+app.use("/api/enrolled-courses", enrolledCourses);
+app.use("/api/forum", forum);
+app.use("/api/payment", payment);
+app.use("/api/quizz", quizz);
+app.use("/api/student", student);
+app.use("/api/sub-admin", subAdmin);
+app.use("/api/user", user);
 
-
+app.use('/graphql', graphqlHTTP({ schema, graphiql: true }));
 
 const PORT = process.env.PORT || 4000; // Use the PORT environment variable if set, otherwise default to 3000
 app.listen(process.env.PORT, () => {
