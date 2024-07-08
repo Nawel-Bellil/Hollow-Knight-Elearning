@@ -1,55 +1,31 @@
-const express = require("express");
-//const { Pool } = require("pg"); // Import the Pool object from the 'pg' module
+require('dotenv').config();
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const { typeDefs } = require('./graphql/typeDefs');
+const { resolvers } = require('./graphql/resolvers');
+const { PrismaClient } = require('@prisma/client');
+const { protect } = require('./middleware/authMiddleware');
 
-const cors = require("cors");
-//create instance of express app
+const prisma = new PrismaClient();
 const app = express();
-//config middleware
-require("dotenv").config();
-app.use(express.json());
-// Enable CORS for all
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
-const { graphqlHTTP } = require('express-graphql');
-const { makeExecutableSchema } = require('graphql-tools');
-const { readFileSync } = require('fs');
-const { join } = require('path');
-const resolvers = require('./resolvers');
-const typeDefs = readFileSync(join(__dirname, 'schema.graphql'), 'utf8');
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-// Import route files
-const admin = require("./controllers/admin");
-const certificate = require("./controllers/certificate");
-const courseProgress = require("./controllerscourse_progress");
-const course = require("./controllers/course");
-const enrolledCourses = require("./controllers/enrolledcourses");
-const forum = require("./controllers/forum");
-const payment = require("./controllers/payment");
-const quizz = require("./controllers/quizz");
-const student = require("./controllers/student");
-const subAdmin = require("./controllers/subAdmin");
-const user = require("./controllers/user");
 
-// Use
-app.use("/api/admin", admin);
-app.use("/api/certificate", certificate);
-app.use("/api/course-progress", courseProgress);
-app.use("/api/course", course);
-app.use("/api/enrolled-courses", enrolledCourses);
-app.use("/api/forum", forum);
-app.use("/api/payment", payment);
-app.use("/api/quizz", quizz);
-app.use("/api/student", student);
-app.use("/api/sub-admin", subAdmin);
-app.use("/api/user", user);
+// Use the protect middleware
+app.use(protect);
 
-app.use('/graphql', graphqlHTTP({ schema, graphiql: true }));
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => ({
+    user: req.user,
+    prisma,
+  }),
+});
 
-const PORT = process.env.PORT || 4000; // Use the PORT environment variable if set, otherwise default to 3000
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+server.start().then(res => {
+  server.applyMiddleware({ app });
+
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}${server.graphqlPath}`);
+  });
 });

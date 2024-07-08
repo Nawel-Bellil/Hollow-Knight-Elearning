@@ -1,0 +1,12 @@
+     Why Use GraphQL After Defining REST APIs?
+
+-1- Efficient Data Fetching: Clients can request exactly the data they 
+need, reducing over-fetching and under-fetching.
+-2- Unified API: Consolidate multiple REST endpoints into a single GraphQL
+ endpoint, simplifying client interactions.
+-3- Improved Performance: Minimize the number of requests needed to fetch
+ related data.
+-4- Better Tooling: Use GraphQL's introspection to automatically generate
+ documentation and enhance development tools.
+-5- Easier Evolution: Add new fields and types without affecting existing
+ queries, reducing the need for versioning.
