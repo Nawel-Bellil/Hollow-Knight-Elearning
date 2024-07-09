@@ -47,13 +47,12 @@ const resolvers = {
     },
     // Create a new course
     createCourse: async (_, { title, description, content, adminId }, { user }) => {
-      // Ensure the user is authenticated
+      console.log("Create course mutation called");
       if (!user) throw new Error("Not authenticated");
-      // Find the admin by ID
+      console.log("User is authenticated");
       const admin = await prisma.admin.findUnique({ where: { id: adminId } });
-      // If admin is not found, throw an error
       if (!admin) throw new Error("Admin not found");
-      // Create a new course in the database
+      console.log("Admin found:", admin);
       const course = await prisma.course.create({
         data: {
           title,
@@ -62,6 +61,7 @@ const resolvers = {
           admin: { connect: { id: adminId } },
         },
       });
+      console.log("Course created:", course);
       return course;
     },
     // Create a new student
