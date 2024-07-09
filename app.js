@@ -28,4 +28,6 @@ server.start().then(res => {
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}${server.graphqlPath}`);
   });
+}).catch(error => {
+  console.error('Error starting Apollo Server:', error);
 });

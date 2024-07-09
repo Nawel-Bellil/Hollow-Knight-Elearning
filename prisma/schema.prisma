@@ -1,137 +1,151 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is your Prisma schema file, which defines your database models and their relations.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// Generator for Prisma Client, a type-safe database client for Node.js & TypeScript.
 generator client {
   provider = "prisma-client-js"
 }
 
+// Datasource configuration for connecting to your PostgreSQL database.
+// The connection URL is stored in an environment variable named DATABASE_URL.
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// User model representing users in the application.
+// This model uses inheritance to relate to different user roles (Student, Admin, Sub_Admin).
 model User {
-  id         Int      @id @default(autoincrement()) // Unique identifier for the user
-  email      String   @unique // Unique email address of the user
-  first_name String   @default("")
-  last_name  String   @default("")
-  password   String
-  student    Student? // Define a one-to-one relation to Student
-  admin Admin? // Define a one-to-one relation to Admin
-  sub_admin Sub_Admin?  // Define a one-to-one relation to Sub_Admin
+  id         Int      @id @default(autoincrement()) // Unique identifier for the user.
+  email      String   @unique // Unique email address of the user.
+  first_name String   @default("") // First name of the user, default is an empty string.
+  last_name  String   @default("") // Last name of the user, default is an empty string.
+  password   String // Password for the user account.
+  student    Student? // Define a one-to-one relation to Student.
+  admin      Admin? // Define a one-to-one relation to Admin.
+  sub_admin  Sub_Admin? // Define a one-to-one relation to Sub_Admin.
 }
+
+// Admin model representing admin users in the application.
 model Admin {
-  id               Int         @id @default(autoincrement())
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)       
-  userId           Int         @unique
-  role             String      @default("ADMIN")
-  is_superadmin    Boolean
-  dashboard_access Boolean
-  sub_admins       Sub_Admin[]
-  courses          Course[]
-
+  id               Int         @id @default(autoincrement()) // Unique identifier for the admin.
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User.
+  userId           Int         @unique // Unique userId for the admin.
+  role             String      @default("ADMIN") // Role of the admin, default is "ADMIN".
+  is_superadmin    Boolean // Flag to indicate if the admin is a superadmin.
+  dashboard_access Boolean // Flag to indicate if the admin has dashboard access.
+  sub_admins       Sub_Admin[] // List of sub-admins managed by this admin.
+  courses          Course[] // List of courses managed by this admin.
 }
 
-model Sub_Admin{
-  id               Int         @id @default(autoincrement())
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           Int         @unique
-  password         String
-  role             String      @default("SUB_ADMIN")
-  admin            Admin       @relation(fields: [adminId], references: [id])
-  adminId          Int
-  can_manage_users Boolean
+// Sub_Admin model representing sub-admin users in the application.
+model Sub_Admin {
+  id               Int         @id @default(autoincrement()) // Unique identifier for the sub-admin.
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User.
+  userId           Int         @unique // Unique userId for the sub-admin.
+  password         String // Password for the sub-admin account.
+  role             String      @default("SUB_ADMIN") // Role of the sub-admin, default is "SUB_ADMIN".
+  admin            Admin       @relation(fields: [adminId], references: [id]) // Reference to the associated admin.
+  adminId          Int // Unique identifier for the associated admin.
+  can_manage_users Boolean // Flag to indicate if the sub-admin can manage users.
 }
 
+// Student model representing students in the application.
 model Student {
-  id                 Int                 @id @default(autoincrement())
-  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             Int                 @unique
-  role               String              @default("STUDENT")
-  enrolled_courses   EnrolledCourse[]
-  forum_posts        ForumPost[]
-  track_progress     CourseProgress[]
-  certificates       Certificate[]
-  payment_transactions PaymentTransaction[]
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  id                   Int                   @id @default(autoincrement()) // Unique identifier for the student.
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User.
+  userId               Int                   @unique // Unique userId for the student.
+  role                 String                @default("STUDENT") // Role of the student, default is "STUDENT".
+  enrolled_courses     EnrolledCourse[]      // List of courses the student is enrolled in.
+  forum_posts          ForumPost[]           // List of forum posts made by the student.
+  track_progress       CourseProgress[]      // List of course progress records for the student.
+  certificates         Certificate[]         // List of certificates earned by the student.
+  payment_transactions PaymentTransaction[]  // List of payment transactions made by the student.
+  createdAt            DateTime              @default(now()) // Timestamp for when the student record was created.
+  updatedAt            DateTime              @updatedAt // Timestamp for when the student record was last updated.
 }
 
-model Course{
-  id                Int                  @id @default(autoincrement())
-  title             String
-  description       String
-  content           String
-  admin             Admin                @relation(fields: [adminId], references: [id])
-  adminId           Int
-  enrolled_students EnrolledCourse[]
-  forum_posts       ForumPost[]
-  course_progress   CourseProgress[]
-  certificates      Certificate[]
-  payment_transactions PaymentTransaction[]
-  quizz             Quizz?
-  quizz_solved      Boolean
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-  
+// Course model representing courses in the application.
+model Course {
+  id                   Int                   @id @default(autoincrement()) // Unique identifier for the course.
+  title                String // Title of the course.
+  description          String // Description of the course.
+  content              String // Content of the course.
+  admin                Admin                 @relation(fields: [adminId], references: [id]) // Relation to the admin who manages the course.
+  adminId              Int // Unique identifier for the admin who manages the course.
+  enrolled_students    EnrolledCourse[]      // List of students enrolled in the course.
+  forum_posts          ForumPost[]           // List of forum posts related to the course.
+  course_progress      CourseProgress[]      // List of course progress records for the course.
+  certificates         Certificate[]         // List of certificates related to the course.
+  payment_transactions PaymentTransaction[]  // List of payment transactions related to the course.
+  quizz                Quizz?                // Optional quiz associated with the course.
+  quizz_solved         Boolean // Flag to indicate if the quiz has been solved.
+  createdAt            DateTime              @default(now()) // Timestamp for when the course record was created.
+  updatedAt            DateTime              @updatedAt // Timestamp for when the course record was last updated.
 }
+
+// Quizz model representing quizzes in the application.
 model Quizz {
-  quizz_id       Int            @id @default(autoincrement())
-  course         Course        @relation(fields: [courseId], references: [id]) // Reference to the associated Chapter
-  courseId       Int           @unique
-  solved         Boolean
-  
-} 
+  quizz_id  Int     @id @default(autoincrement()) // Unique identifier for the quiz.
+  course    Course  @relation(fields: [courseId], references: [id]) // Reference to the associated course.
+  courseId  Int     @unique // Unique courseId for the quiz.
+  solved    Boolean // Flag to indicate if the quiz has been solved.
+}
 
+// EnrolledCourse model representing the association between students and courses.
 model EnrolledCourse {
-  id         Int     @id @default(autoincrement())
-  student    Student @relation(fields: [studentId], references: [id])
-  studentId  Int
-  course     Course  @relation(fields: [courseId], references: [id])
-  courseId   Int
-  createdAt  DateTime @default(now())
+  id         Int      @id @default(autoincrement()) // Unique identifier for the enrollment record.
+  student    Student  @relation(fields: [studentId], references: [id]) // Reference to the student.
+  studentId  Int // Unique identifier for the student.
+  course     Course   @relation(fields: [courseId], references: [id]) // Reference to the course.
+  courseId   Int // Unique identifier for the course.
+  createdAt  DateTime @default(now()) // Timestamp for when the enrollment record was created.
 }
 
+// CourseProgress model representing the progress of students in courses.
 model CourseProgress {
-  id        Int      @id @default(autoincrement())
-  course    Course   @relation(fields: [courseId], references: [id])
-  courseId  Int
-  student   Student  @relation(fields: [studentId], references: [id])
-  studentId Int
-  progress  Int
-  updatedAt DateTime @default(now())
-
+  id         Int      @id @default(autoincrement()) // Unique identifier for the progress record.
+  course     Course   @relation(fields: [courseId], references: [id]) // Reference to the course.
+  courseId   Int // Unique identifier for the course.
+  student    Student  @relation(fields: [studentId], references: [id]) // Reference to the student.
+  studentId  Int // Unique identifier for the student.
+  progress   Int // Progress percentage of the student in the course.
+  updatedAt  DateTime @default(now()) // Timestamp for when the progress record was last updated.
 }
 
+// ForumPost model representing forum posts in the application.
 model ForumPost {
-  id         Int      @id @default(autoincrement())
-  course     Course   @relation(fields: [courseId], references: [id])
-  courseId   Int
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id         Int      @id @default(autoincrement()) // Unique identifier for the forum post.
+  course     Course   @relation(fields: [courseId], references: [id]) // Reference to the associated course.
+  courseId   Int // Unique identifier for the course.
+  student    Student  @relation(fields: [studentId], references: [id]) // Reference to the student who made the post.
+  studentId  Int // Unique identifier for the student.
+  content    String // Content of the forum post.
+  createdAt  DateTime @default(now()) // Timestamp for when the forum post was created.
+  updatedAt  DateTime @updatedAt // Timestamp for when the forum post was last updated.
 }
 
+// Certificate model representing certificates awarded to students.
 model Certificate {
-  id         Int      @id @default(autoincrement())
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  course     Course   @relation(fields: [courseId], references: [id])
-  courseId   Int
-  certificate String
-  issuedAt   DateTime @default(now())
+  id          Int      @id @default(autoincrement()) // Unique identifier for the certificate.
+  student     Student  @relation(fields: [studentId], references: [id]) // Reference to the student who earned the certificate.
+  studentId   Int // Unique identifier for the student.
+  course      Course   @relation(fields: [courseId], references: [id]) // Reference to the course for which the certificate was awarded.
+  courseId    Int // Unique identifier for the course.
+  certificate String // Details of the certificate.
+  issuedAt    DateTime @default(now()) // Timestamp for when the certificate was issued.
 }
 
+// PaymentTransaction model representing payment transactions in the application.
 model PaymentTransaction {
-  id         Int      @id @default(autoincrement())
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  course     Course   @relation(fields: [courseId], references: [id])
-  courseId   Int
-  amount     Int
-  createdAt  DateTime @default(now())
+  id          Int      @id @default(autoincrement()) // Unique identifier for the payment transaction.
+  student     Student  @relation(fields: [studentId], references: [id]) // Reference to the student making the payment.
+  studentId   Int // Unique identifier for the student.
+  course      Course   @relation(fields: [courseId], references: [id]) // Reference to the course for which the payment was made.
+  courseId    Int // Unique identifier for the course.
+  amount      Int // Amount of the payment.
+  createdAt   DateTime @default(now()) // Timestamp for when the payment transaction was created.
 }

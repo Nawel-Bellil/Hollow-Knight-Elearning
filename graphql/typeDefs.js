@@ -1,6 +1,9 @@
+// Import the gql function from apollo-server-express
 const { gql } = require('apollo-server-express');
 
+// Define the GraphQL schema using the gql function
 const typeDefs = gql`
+  # Define the Query type for fetching data
   type Query {
     allUsers: [User!]!
     allCourses: [Course!]!
@@ -15,6 +18,7 @@ const typeDefs = gql`
     allCourseProgress: [CourseProgress!]!
   }
 
+  # Define the Mutation type for modifying data
   type Mutation {
     createUser(email: String!, first_name: String, last_name: String, password: String!): User
     createCourse(title: String!, description: String!, content: String!, adminId: Int!): Course
@@ -29,6 +33,7 @@ const typeDefs = gql`
     trackCourseProgress(studentId: Int!, courseId: Int!, progress: Int!): CourseProgress
   }
 
+  # Define the User type
   type User {
     id: Int!
     email: String!
@@ -40,6 +45,7 @@ const typeDefs = gql`
     sub_admin: Sub_Admin
   }
 
+  # Define the Admin type
   type Admin {
     id: Int!
     user: User!
@@ -50,6 +56,7 @@ const typeDefs = gql`
     courses: [Course!]!
   }
 
+  # Define the Sub_Admin type
   type Sub_Admin {
     id: Int!
     user: User!
@@ -58,6 +65,7 @@ const typeDefs = gql`
     can_manage_users: Boolean!
   }
 
+  # Define the Student type
   type Student {
     id: Int!
     user: User!
@@ -71,6 +79,7 @@ const typeDefs = gql`
     updatedAt: String!
   }
 
+  # Define the Course type
   type Course {
     id: Int!
     title: String!
@@ -88,12 +97,14 @@ const typeDefs = gql`
     updatedAt: String!
   }
 
+  # Define the Quizz type
   type Quizz {
     quizz_id: Int!
     course: Course!
     solved: Boolean!
   }
 
+  # Define the EnrolledCourse type
   type EnrolledCourse {
     id: Int!
     student: Student!
@@ -101,6 +112,7 @@ const typeDefs = gql`
     createdAt: String!
   }
 
+  # Define the CourseProgress type
   type CourseProgress {
     id: Int!
     course: Course!
@@ -109,6 +121,7 @@ const typeDefs = gql`
     updatedAt: String!
   }
 
+  # Define the ForumPost type
   type ForumPost {
     id: Int!
     course: Course!
@@ -118,6 +131,7 @@ const typeDefs = gql`
     updatedAt: String!
   }
 
+  # Define the Certificate type
   type Certificate {
     id: Int!
     student: Student!
@@ -126,6 +140,7 @@ const typeDefs = gql`
     issuedAt: String!
   }
 
+  # Define the PaymentTransaction type
   type PaymentTransaction {
     id: Int!
     student: Student!
@@ -133,19 +148,21 @@ const typeDefs = gql`
     amount: Int!
     createdAt: String!
   }
-    type Query {
-  allPaymentTransactions: [PaymentTransaction!]!
-  allUsers: [User!]!
-  allAdmins: [Admin!]!
-  allStudents: [Student!]!
-  allCourses: [Course!]!
-  allQuizzes: [Quizz!]!
-  allEnrolledCourses: [EnrolledCourse!]!
-  allCourseProgresses: [CourseProgress!]!
-  allForumPosts: [ForumPost!]!
-  allCertificates: [Certificate!]!
-}
 
+  # Re-define the Query type for consistency
+  type Query {
+    allPaymentTransactions: [PaymentTransaction!]!
+    allUsers: [User!]!
+    allAdmins: [Admin!]!
+    allStudents: [Student!]!
+    allCourses: [Course!]!
+    allQuizzes: [Quizz!]!
+    allEnrolledCourses: [EnrolledCourse!]!
+    allCourseProgresses: [CourseProgress!]!
+    allForumPosts: [ForumPost!]!
+    allCertificates: [Certificate!]!
+  }
 `;
 
-module.exports = {typeDefs};
+// Export the typeDefs to be used in the GraphQL server
+module.exports = { typeDefs };
