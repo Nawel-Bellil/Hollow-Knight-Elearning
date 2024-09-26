@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Courses</title>
+</head>
+<body>
+    <header>
+        <h1>Course Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="users.html">Users</a></li>
+                <li><a href="students.html">Students</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="courses">
+            <h2>Available Courses</h2>
+            <div class="course-list">
+                <!-- Course items will be dynamically generated here -->
+                <div class="course-item">
+                    <h3>Course Name</h3>
+                    <p>Description of the course.</p>
+                </div>
+            </div>
+        </section>
+        <section id="add-course">
+            <h2>Add New Course</h2>
+            <form id="course-form" action="#" method="POST">
+                <input type="text" placeholder="Course Name" required aria-label="Course Name">
+                <textarea placeholder="Course Description" required aria-label="Course Description"></textarea>
+                <button type="submit">Add Course</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Course Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

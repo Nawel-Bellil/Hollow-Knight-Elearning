@@ -1,0 +1,128 @@
+/* Reset styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Header styles */
+header {
+    background: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    transition: background 0.3s;
+}
+
+nav a:hover {
+    background: #0056b3;
+    border-radius: 5px;
+}
+
+/* Main styles */
+main {
+    padding: 20px;
+}
+
+/* Hero section */
+.hero {
+    background: #e9ecef;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Features list */
+.features ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.features li {
+    margin: 5px 0;
+}
+
+/* Section styles */
+section {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Course, user, and student lists */
+.course-list, .user-list, .student-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.course-item, .user-item, .student-item {
+    background: #e9ecef;
+    border-radius: 5px;
+    padding: 10px;
+    flex: 1 1 calc(30% - 10px); /* Adjust for responsive */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Form styles */
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border 0.3s;
+}
+
+input:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+/* Button styles */
+button {
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #218838;
+}
+
+/*

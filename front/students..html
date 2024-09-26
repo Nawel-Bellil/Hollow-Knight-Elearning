@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Students</title>
+</head>
+<body>
+    <header>
+        <h1>Course Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="users.html">Users</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="students">
+            <h2>Student Registrations</h2>
+            <div class="student-list">
+                <!-- Student items will be dynamically generated here -->
+                <div class="student-item">
+                    <h3>Student Name</h3>
+                    <p>Email: student@example.com</p>
+                </div>
+            </div>
+        </section>
+        <section id="add-student">
+            <h2>Add New Student</h2>
+            <form id="student-form" action="#" method="POST">
+                <input type="text" placeholder="Student Name" required aria-label="Student Name">
+                <input type="email" placeholder="Email" required aria-label="Email">
+                <button type="submit">Add Student</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Course Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

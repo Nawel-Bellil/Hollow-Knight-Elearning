@@ -21,6 +21,7 @@ const server = new ApolloServer({
   }),
 });
 
+// Start Apollo Server
 server.start().then(res => {
   server.applyMiddleware({ app });
 

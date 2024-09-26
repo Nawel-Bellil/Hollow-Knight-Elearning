@@ -9,27 +9,27 @@ const typeDefs = gql`
     allCourses: [Course!]!
     allStudents: [Student!]!
     allAdmins: [Admin!]!
-    allSubAdmins: [Sub_Admin!]!
+    allSubAdmins: [SubAdmin!]!
     allCertificates: [Certificate!]!
     allEnrolledCourses: [EnrolledCourse!]!
     allForumPosts: [ForumPost!]!
     allPayments: [PaymentTransaction!]!
-    allQuizzes: [Quizz!]!
+    allQuizzes: [Quiz!]!
     allCourseProgress: [CourseProgress!]!
   }
 
   # Define the Mutation type for modifying data
   type Mutation {
-    createUser(email: String!, first_name: String, last_name: String, password: String!): User
+    createUser(email: String!, firstName: String, lastName: String, password: String!): User
     createCourse(title: String!, description: String!, content: String!, adminId: Int!): Course
     createStudent(userId: Int!): Student
-    createAdmin(userId: Int!, is_superadmin: Boolean!, dashboard_access: Boolean!): Admin
-    createSubAdmin(userId: Int!, adminId: Int!, can_manage_users: Boolean!): Sub_Admin
+    createAdmin(userId: Int!, isSuperAdmin: Boolean!, dashboardAccess: Boolean!): Admin
+    createSubAdmin(userId: Int!, adminId: Int!, canManageUsers: Boolean!): SubAdmin
     createCertificate(studentId: Int!, courseId: Int!, certificate: String!): Certificate
     enrollCourse(studentId: Int!, courseId: Int!): EnrolledCourse
     createForumPost(studentId: Int!, courseId: Int!, content: String!): ForumPost
     createPayment(studentId: Int!, courseId: Int!, amount: Int!): PaymentTransaction
-    createQuiz(courseId: Int!, solved: Boolean!): Quizz
+    createQuiz(courseId: Int!, solved: Boolean!): Quiz
     trackCourseProgress(studentId: Int!, courseId: Int!, progress: Int!): CourseProgress
   }
 
@@ -37,12 +37,12 @@ const typeDefs = gql`
   type User {
     id: Int!
     email: String!
-    first_name: String
-    last_name: String
-    password: String!
+    firstName: String
+    lastName: String
+    password: String! # Consider removing this in production
     student: Student
     admin: Admin
-    sub_admin: Sub_Admin
+    subAdmin: SubAdmin
   }
 
   # Define the Admin type
@@ -50,19 +50,19 @@ const typeDefs = gql`
     id: Int!
     user: User!
     role: String!
-    is_superadmin: Boolean!
-    dashboard_access: Boolean!
-    sub_admins: [Sub_Admin!]!
+    isSuperAdmin: Boolean!
+    dashboardAccess: Boolean!
+    subAdmins: [SubAdmin!]!
     courses: [Course!]!
   }
 
-  # Define the Sub_Admin type
-  type Sub_Admin {
+  # Define the SubAdmin type
+  type SubAdmin {
     id: Int!
     user: User!
     role: String!
     admin: Admin!
-    can_manage_users: Boolean!
+    canManageUsers: Boolean!
   }
 
   # Define the Student type
@@ -70,11 +70,11 @@ const typeDefs = gql`
     id: Int!
     user: User!
     role: String!
-    enrolled_courses: [EnrolledCourse!]!
-    forum_posts: [ForumPost!]!
-    track_progress: [CourseProgress!]!
+    enrolledCourses: [EnrolledCourse!]!
+    forumPosts: [ForumPost!]!
+    trackProgress: [CourseProgress!]!
     certificates: [Certificate!]!
-    payment_transactions: [PaymentTransaction!]!
+    paymentTransactions: [PaymentTransaction!]!
     createdAt: String!
     updatedAt: String!
   }
@@ -86,20 +86,20 @@ const typeDefs = gql`
     description: String!
     content: String!
     admin: Admin!
-    enrolled_students: [EnrolledCourse!]!
-    forum_posts: [ForumPost!]!
-    course_progress: [CourseProgress!]!
+    enrolledStudents: [EnrolledCourse!]!
+    forumPosts: [ForumPost!]!
+    courseProgress: [CourseProgress!]!
     certificates: [Certificate!]!
-    payment_transactions: [PaymentTransaction!]!
-    quizz: Quizz
-    quizz_solved: Boolean!
+    paymentTransactions: [PaymentTransaction!]!
+    quiz: Quiz
+    quizSolved: Boolean!
     createdAt: String!
     updatedAt: String!
   }
 
-  # Define the Quizz type
-  type Quizz {
-    quizz_id: Int!
+  # Define the Quiz type
+  type Quiz {
+    quizId: Int!
     course: Course!
     solved: Boolean!
   }
