@@ -148,20 +148,6 @@ const typeDefs = gql`
     amount: Int!
     createdAt: String!
   }
-
-  # Re-define the Query type for consistency
-  type Query {
-    allPaymentTransactions: [PaymentTransaction!]!
-    allUsers: [User!]!
-    allAdmins: [Admin!]!
-    allStudents: [Student!]!
-    allCourses: [Course!]!
-    allQuizzes: [Quizz!]!
-    allEnrolledCourses: [EnrolledCourse!]!
-    allCourseProgresses: [CourseProgress!]!
-    allForumPosts: [ForumPost!]!
-    allCertificates: [Certificate!]!
-  }
 `;
 
 // Export the typeDefs to be used in the GraphQL server
